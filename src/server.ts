@@ -5,6 +5,7 @@ import session from 'express-session';
 import cookieParser from 'cookie-parser';
 import authRoutes from './routes/authRoutes';
 import entryRoutes from './routes/entryRoutes';
+import adminRoutes from './routes/adminRoutes';
 import whitelistRoutes from './routes/whitelistRoutes';
 import statusRoutes from './controllers/statusController';
 
@@ -13,6 +14,24 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 6969;
 
+const allowedOrigins = [
+   'https://wordsofdeath.vercel.app',
+   'http://localhost:3000', // development site
+   'http://localhost:3001' // development site
+];
+
+const corsOptions: cors.CorsOptions = {
+   origin: function (origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+         callback(null, true);
+      } else {
+         callback(new Error('Not allowed by CORS'));
+      }
+   },
+   credentials: true
+};
+
+app.use(cors(corsOptions));
 app.use(cookieParser());
 app.use(session({
    secret: process.env.JWT_SECRET || 'secret',
@@ -21,15 +40,12 @@ app.use(session({
 }));
 
 app.use(express.json());
-app.use(cors({
-   origin: process.env.CLIENT_URL,
-   credentials: true
-}));
 
 app.use(authRoutes);
 app.use(entryRoutes);
 app.use(whitelistRoutes);
 app.use(statusRoutes);
+app.use(adminRoutes); 
 
 app.listen(PORT, () => {
    console.log(`[SERVER]: Listening on port ${PORT}`);
