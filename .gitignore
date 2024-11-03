@@ -8,4 +8,3 @@
 .env*
 
 .vercel
-vercel.json
