@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "target": "ES6", // Setze die ECMAScript-Version, auf die kompiliert werden soll
+    "module": "commonjs", // Verwende CommonJS-Modul
+    "outDir": "./dist", // Ausgabeordner für kompilierten Code
+    "rootDir": "./src", // Quellordner für TypeScript-Dateien
+    "strict": true, // Aktiviere alle strengen Typ-Prüfungen
+    "esModuleInterop": true, // Aktiviere Interoperabilität zwischen ES-Modulen und CommonJS
+    "skipLibCheck": true, // Überspringe die Überprüfung von Definitionen in .d.ts-Dateien
+    "forceConsistentCasingInFileNames": true // Konsistente Groß-/Kleinschreibung bei Dateinamen erzwingen
+  },
+  "include": [
+    "src/**/*" // Alle TypeScript-Dateien im src-Ordner einbeziehen
+  ],
+  "exclude": [
+    "node_modules", // Node-Module ausschließen
+    "**/*.spec.ts" // Optional: Ausschluss von Testdateien
+  ]
+}
