@@ -22,7 +22,6 @@ app.use(session({
 app.use(express.json());
 app.use(cors({ origin: 'http://localhost:3000', credentials: true }));
 
-// Routen
 app.use(authRoutes);
 app.use(entryRoutes);
 app.use(whitelistRoutes);

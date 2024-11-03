@@ -2,33 +2,39 @@ import { Request, Response } from 'express';
 import { connectDB } from '../config/db';
 
 /**
- * Fügt einen Benutzer zur Whitelist hinzu.
+ * Adds a user to the whitelist.
+ * @param req - The request object containing the incoming HTTP request.
+ * @param res - The response object used to send a response to the client.
+ * @returns {Promise<void>}
  */
 export const addToWhitelist = async (req: Request, res: Response): Promise<void> => {
    const { username } = req.body;
    if (!username) {
-      res.status(400).send('Username is required.'); // sende eine Antwort
-      return; // verlasse die Funktion
+      res.status(400).send('Username is required.');
+      return;
    }
 
    try {
       const database = await connectDB();
       const existingUser = await database.collection('whitelist').findOne({ username });
       if (existingUser) {
-         res.status(400).send('User is already on the whitelist.'); // sende eine Antwort
-         return; // verlasse die Funktion
+         res.status(400).send('User is already on the whitelist.');
+         return;
       }
 
       const result = await database.collection('whitelist').insertOne({ username, added_at: new Date() });
       res.status(201).send({ id: result.insertedId, username, added_at: new Date() });
    } catch (error) {
       console.error('[SERVER]: Error adding user to whitelist:', error);
-      res.status(500).send('Error adding user to whitelist.'); // sende eine Antwort
+      res.status(500).send('Error adding user to whitelist.');
    }
 };
 
 /**
- * Ruft die Whitelist-Benutzer ab.
+ * Retrieves the whitelist users.
+ * @param req - The request object containing the incoming HTTP request.
+ * @param res - The response object used to send a response to the client.
+ * @returns {Promise<void>}
  */
 export const getWhitelist = async (req: Request, res: Response): Promise<void> => {
    try {
@@ -37,12 +43,15 @@ export const getWhitelist = async (req: Request, res: Response): Promise<void> =
       res.status(200).json(users);
    } catch (error) {
       console.error('[SERVER]: Error retrieving whitelist users:', error);
-      res.status(500).send('Error retrieving whitelist users.'); // sende eine Antwort
+      res.status(500).send('Error retrieving whitelist users.');
    }
 };
 
 /**
- * Entfernt einen Benutzer von der Whitelist.
+ * Removes a user from the whitelist.
+ * @param req - The request object containing the incoming HTTP request.
+ * @param res - The response object used to send a response to the client.
+ * @returns {Promise<void>}
  */
 export const deleteFromWhitelist = async (req: Request, res: Response): Promise<void> => {
    const username = req.params.username;
@@ -52,13 +61,13 @@ export const deleteFromWhitelist = async (req: Request, res: Response): Promise<
       const result = await database.collection('whitelist').deleteOne({ username });
 
       if (result.deletedCount === 0) {
-         res.status(404).json({ message: "User not found." }); // sende eine Antwort
-         return; // verlasse die Funktion
+         res.status(404).json({ message: "User not found." });
+         return;
       }
 
       res.status(200).json({ message: "User successfully removed." });
    } catch (error) {
       console.error('[SERVER]: Error removing user from whitelist:', error);
-      res.status(500).json({ message: "Internal server error." }); // sende eine Antwort
+      res.status(500).json({ message: "Internal server error." });
    }
 };

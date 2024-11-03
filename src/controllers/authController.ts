@@ -8,12 +8,23 @@ const DISCORD_CLIENT_ID = process.env.DISCORD_CLIENT_ID as string;
 const DISCORD_CLIENT_SECRET = process.env.DISCORD_CLIENT_SECRET as string;
 const REDIRECT_URI = `${process.env.SERVER_URL}/auth/discord/callback`;
 
+/**
+ * Redirects the user to the Discord authentication page.
+ * @param req - The request object containing the incoming HTTP request.
+ * @param res - The response object used to send a response to the client.
+ */
 export const discordAuth = (req: Request, res: Response) => {
    const discordAuthUrl = `https://discord.com/api/oauth2/authorize?client_id=${DISCORD_CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&response_type=code&scope=identify`;
    console.error("[SERVER]: Redirecting user to Discord authentication page.");
    res.redirect(discordAuthUrl);
 };
 
+/**
+ * Handles the callback from Discord after user authentication.
+ * @param req - The request object containing the incoming HTTP request.
+ * @param res - The response object used to send a response to the client.
+ * @returns {Promise<void>}
+ */
 export const discordCallback = async (req: Request, res: Response): Promise<void> => {
    const { code } = req.query;
 

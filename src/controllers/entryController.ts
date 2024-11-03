@@ -3,7 +3,10 @@ import { connectDB } from '../config/db';
 import { ObjectId } from 'mongodb';
 
 /**
- * Erstellt einen neuen Eintrag.
+ * Creates a new entry.
+ * @param req - The request object containing the incoming HTTP request.
+ * @param res - The response object used to send a response to the client.
+ * @returns {Promise<void>}
  */
 export const createEntry = async (req: Request, res: Response): Promise<void> => {
    const { entry, type, categories, variation } = req.body;
@@ -36,7 +39,10 @@ export const createEntry = async (req: Request, res: Response): Promise<void> =>
 };
 
 /**
- * Ruft alle Einträge ab.
+ * Retrieves all entries.
+ * @param req - The request object containing the incoming HTTP request.
+ * @param res - The response object used to send a response to the client.
+ * @returns {Promise<void>}
  */
 export const getEntries = async (req: Request, res: Response): Promise<void> => {
    try {
@@ -52,7 +58,10 @@ export const getEntries = async (req: Request, res: Response): Promise<void> => 
 };
 
 /**
- * Löscht einen Eintrag anhand der ID.
+ * Deletes an entry by ID.
+ * @param req - The request object containing the incoming HTTP request.
+ * @param res - The response object used to send a response to the client.
+ * @returns {Promise<void>}
  */
 export const deleteEntry = async (req: Request, res: Response): Promise<void> => {
    const entryId = req.params.id;
