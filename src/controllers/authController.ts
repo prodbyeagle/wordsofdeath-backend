@@ -15,7 +15,7 @@ const REDIRECT_URI = `${process.env.SERVER_URL}/auth/discord/callback`;
  */
 export const discordAuth = (req: Request, res: Response) => {
    const discordAuthUrl = `https://discord.com/api/oauth2/authorize?client_id=${DISCORD_CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&response_type=code&scope=identify`;
-   console.error("[SERVER]: Redirecting user to Discord authentication page.");
+   console.log("[SERVER]: Redirecting user to Discord authentication page.");
    res.redirect(discordAuthUrl);
 };
 
@@ -79,7 +79,7 @@ export const discordCallback = async (req: Request, res: Response): Promise<void
          sameSite: 'lax',
       });
       console.log("[SERVER]: User successfully authenticated and redirected to the application.");
-      res.redirect('http://localhost:3000/');
+      res.redirect('https://wordsofdeath.vercel.app/');
    } catch (error) {
       console.error('[SERVER]: Error during Discord authentication:', error);
       res.status(500).send('Error during authentication');
