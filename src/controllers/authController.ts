@@ -95,7 +95,7 @@ export const discordCallback = async (req: Request, res: Response): Promise<void
       log("info", "Setting authentication cookie.");
       res.cookie('wordsofdeath', token, {
          maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-         sameSite: 'lax',
+         sameSite: 'none',
          secure: process.env.NODE_ENV === 'production',
          httpOnly: false,
       });

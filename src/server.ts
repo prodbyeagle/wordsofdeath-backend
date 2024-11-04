@@ -19,6 +19,7 @@ const DEBUG = process.env.DEBUG === 'true';
 initializeLogger(DEBUG);
 
 const allowedOrigins = [
+   'https://wordsofdeath-backend.vercel.app', // production site
    'https://wordsofdeath.vercel.app', // production site
    'http://localhost:3000', // development site
    'http://localhost:3001' // development site
