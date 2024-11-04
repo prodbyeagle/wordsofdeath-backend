@@ -95,9 +95,10 @@ export const discordCallback = async (req: Request, res: Response): Promise<void
       log("info", "Setting authentication cookie.");
       res.cookie('wordsofdeath', token, {
          maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+         httpOnly: true,
+         secure: true,
          sameSite: 'none',
-         secure: process.env.NODE_ENV === 'production',
-         httpOnly: false,
+         path: '/',
       });
 
       log("info", `User ${username} authenticated successfully. Redirecting to client.`);
