@@ -84,11 +84,11 @@ export const discordCallback = async (req: Request, res: Response): Promise<void
          log("info", `New user added to the database: ${username}`);
       }
 
-      const httpOnly = process.env.NODE_ENV === "production";
       const token = jwt.sign({ username, avatar, id }, JWT_SECRET, { expiresIn: '1d' });
-      res.cookie('wod_token', token, {
-         httpOnly: httpOnly,
-         secure: process.env.NODE_ENV === "production",
+      res.cookie('token', token, {
+         httpOnly: false,
+         secure: false,
+         sameSite: "none",
          maxAge: 43200000,
       });
       log("info", `User ${username} successfully authenticated and redirected.`);
