@@ -9,7 +9,7 @@ import { log } from '../utils/logger';
 const JWT_SECRET = process.env.JWT_SECRET || 'secret';
 const DISCORD_CLIENT_ID = process.env.DISCORD_CLIENT_ID as string;
 const DISCORD_CLIENT_SECRET = process.env.DISCORD_CLIENT_SECRET as string;
-const REDIRECT_URI = `${process.env.DEV_SERVER_URL}/auth/discord/callback`;
+const REDIRECT_URI = `${process.env.SERVER_URL}/auth/discord/callback`;
 
 /**
  * Redirects the user to the Discord authentication page.
@@ -101,7 +101,7 @@ export const discordCallback = async (req: Request, res: Response): Promise<void
       });
 
       log("info", `User ${username} authenticated successfully. Redirecting to client.`);
-      const redirectUrl = `${process.env.DEV_CLIENT_URL}`;
+      const redirectUrl = `${process.env.CLIENT_URL}`;
       res.redirect(redirectUrl);
    } catch (error: unknown) {
       if (axios.isAxiosError(error)) {
