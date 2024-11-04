@@ -86,10 +86,9 @@ export const discordCallback = async (req: Request, res: Response): Promise<void
 
       const token = jwt.sign({ username, avatar, id }, JWT_SECRET, { expiresIn: '1d' });
       res.cookie('token', token, {
-         httpOnly: false,
-         secure: false,
+         secure: true,
          sameSite: "none",
-         maxAge: 43200000,
+         signed: false,
       });
       log("info", `User ${username} successfully authenticated and redirected.`);
       const redirectUrl = `${process.env.CLIENT_URL}`;
