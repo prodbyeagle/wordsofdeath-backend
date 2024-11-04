@@ -25,17 +25,12 @@ const allowedOrigins = [
 ];
 
 const corsOptions: cors.CorsOptions = {
-   origin: function (origin, callback) {
-      if (!origin || allowedOrigins.includes(origin)) {
-         callback(null, true);
-      } else {
-         callback(new Error('Not allowed by CORS'));
-      }
-   },
+   origin: allowedOrigins,
    credentials: true
 };
 
 app.use(cors(corsOptions));
+app.use(express.json());
 app.use(cookieParser());
 app.use(session({
    secret: process.env.JWT_SECRET || 'secret',
@@ -43,13 +38,11 @@ app.use(session({
    saveUninitialized: true,
 }));
 
-app.use(express.json());
-
 app.use(authRoutes);
 app.use(entryRoutes);
 app.use(whitelistRoutes);
 app.use(statusRoutes);
-app.use(adminRoutes); 
+app.use(adminRoutes);
 
 app.listen(PORT, () => {
    console.log(`[SERVER]: Listening on port ${PORT}`);
