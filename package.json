@@ -4,7 +4,7 @@
   "description": "wordsofdeath backend",
   "main": "src/server.ts",
   "scripts": {
-    "start": "node dist/server.js",
+    "start": "npm run build && node dist/server.js",
     "build": "tsc",
     "dev": "ts-node-dev src/server.ts"
   },

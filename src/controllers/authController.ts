@@ -9,7 +9,7 @@ import { log } from '../utils/logger';
 const JWT_SECRET = process.env.JWT_SECRET || 'secret';
 const DISCORD_CLIENT_ID = process.env.DISCORD_CLIENT_ID as string;
 const DISCORD_CLIENT_SECRET = process.env.DISCORD_CLIENT_SECRET as string;
-const REDIRECT_URI = `${process.env.SERVER_URL}/auth/discord/callback`;
+const REDIRECT_URI = `${process.env.CLIENT_URL}/auth/discord/callback`;
 
 /**
  * Redirects the user to the Discord authentication page.
@@ -82,11 +82,21 @@ export const discordCallback = async (req: Request, res: Response): Promise<void
       res.cookie('wod_token', token, {
          maxAge: 24 * 60 * 60 * 1000,
          sameSite: 'lax',
+         // secure: true,
+         // httpOnly: true,
       });
       log("info", `User ${username} successfully authenticated and redirected.`);
-      res.redirect('https://wordsofdeath.vercel.app/');
-   } catch (error) {
-      log("error", `Error during Discord authentication: ${error}`);
+      const redirectUrl = `${process.env.SERVER_URL}`;
+      res.redirect(redirectUrl);
+   } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+         log("error", `Error during Discord authentication: ${error.response?.data}`);
+      } else if (error instanceof Error) {
+         log("error", `Error during Discord authentication: ${error.message}`);
+      } else {
+
+         log("error", `Unexpected error during Discord authentication: ${String(error)}`);
+      }
       res.status(500).send('Error during authentication');
    }
 };
