@@ -1,7 +1,10 @@
+// src/controllers/authController.ts
+
 import { Request, Response } from 'express';
 import axios from 'axios';
 import jwt from 'jsonwebtoken';
 import { connectDB } from '../config/db';
+import { log } from '../utils/logger';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'secret';
 const DISCORD_CLIENT_ID = process.env.DISCORD_CLIENT_ID as string;
@@ -15,7 +18,7 @@ const REDIRECT_URI = `${process.env.SERVER_URL}/auth/discord/callback`;
  */
 export const discordAuth = (req: Request, res: Response) => {
    const discordAuthUrl = `https://discord.com/api/oauth2/authorize?client_id=${DISCORD_CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&response_type=code&scope=identify`;
-   console.log("[SERVER]: Redirecting user to Discord authentication page.");
+   log("info", "Redirecting user to Discord authentication page.");
    res.redirect(discordAuthUrl);
 };
 
@@ -29,7 +32,7 @@ export const discordCallback = async (req: Request, res: Response): Promise<void
    const { code } = req.query;
 
    if (!code) {
-      console.error("[SERVER]: Error - No code received.");
+      log("error", "Error - No code received.");
       res.status(400).send('Error: No code received.');
       return;
    }
@@ -51,12 +54,13 @@ export const discordCallback = async (req: Request, res: Response): Promise<void
       });
 
       const { username, avatar, id } = userInfoResponse.data;
+      log("debug", `Discord user info: ${JSON.stringify({ username, avatar, id })}`);
 
       const database = await connectDB();
       const userInWhitelist = await database.collection('whitelist').findOne({ username });
 
       if (!userInWhitelist) {
-         console.warn("[SERVER]: Error - User not on the whitelist.");
+         log("warn", `Error - User not on the whitelist: ${username}`);
          res.status(403).send('Error: User not on the whitelist.');
          return;
       }
@@ -71,6 +75,7 @@ export const discordCallback = async (req: Request, res: Response): Promise<void
             avatar,
             joined_at: new Date(),
          });
+         log("info", `New user added to the database: ${username}`);
       }
 
       const token = jwt.sign({ username, avatar, id }, JWT_SECRET, { expiresIn: '1d' });
@@ -78,10 +83,10 @@ export const discordCallback = async (req: Request, res: Response): Promise<void
          maxAge: 24 * 60 * 60 * 1000,
          sameSite: 'lax',
       });
-      console.log("[SERVER]: User successfully authenticated and redirected to the application.");
+      log("info", `User ${username} successfully authenticated and redirected.`);
       res.redirect('https://wordsofdeath.vercel.app/');
    } catch (error) {
-      console.error('[SERVER]: Error during Discord authentication:', error);
+      log("error", `Error during Discord authentication: ${error}`);
       res.status(500).send('Error during authentication');
    }
 };

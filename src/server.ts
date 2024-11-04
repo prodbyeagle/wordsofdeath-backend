@@ -7,15 +7,19 @@ import authRoutes from './routes/authRoutes';
 import entryRoutes from './routes/entryRoutes';
 import adminRoutes from './routes/adminRoutes';
 import whitelistRoutes from './routes/whitelistRoutes';
+import { initializeLogger, log } from './utils/logger';
 import statusRoutes from './controllers/statusController';
 
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 6969;
+const DEBUG = process.env.DEBUG === 'true';
+
+initializeLogger(DEBUG);
 
 const allowedOrigins = [
-   'https://wordsofdeath.vercel.app',
+   'https://wordsofdeath.vercel.app', // production site
    'http://localhost:3000', // development site
    'http://localhost:3001' // development site
 ];
