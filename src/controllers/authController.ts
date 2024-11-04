@@ -29,7 +29,13 @@ export const discordAuth = (req: Request, res: Response) => {
  * @returns {Promise<void>}
  */
 export const discordCallback = async (req: Request, res: Response): Promise<void> => {
-   const { code } = req.query;
+   const { code, error, error_description } = req.query;
+
+   if (error === 'access_denied') {
+      log("warn", `Authentication error: ${error_description}`);
+      res.status(403).send(`Access denied: ${error_description}`);
+      return;
+   }
 
    if (!code) {
       log("error", "Error - No code received.");
@@ -78,12 +84,12 @@ export const discordCallback = async (req: Request, res: Response): Promise<void
          log("info", `New user added to the database: ${username}`);
       }
 
+      const httpOnly = process.env.NODE_ENV === "production";
       const token = jwt.sign({ username, avatar, id }, JWT_SECRET, { expiresIn: '1d' });
       res.cookie('wod_token', token, {
-         maxAge: 24 * 60 * 60 * 1000,
-         sameSite: 'lax',
-         // secure: true,
-         // httpOnly: true,
+         httpOnly: httpOnly,
+         secure: process.env.NODE_ENV === "production",
+         maxAge: 43200000,
       });
       log("info", `User ${username} successfully authenticated and redirected.`);
       const redirectUrl = `${process.env.CLIENT_URL}`;
