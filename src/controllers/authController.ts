@@ -86,7 +86,7 @@ export const discordCallback = async (req: Request, res: Response): Promise<void
          // httpOnly: true,
       });
       log("info", `User ${username} successfully authenticated and redirected.`);
-      const redirectUrl = `${process.env.SERVER_URL}`;
+      const redirectUrl = `${process.env.CLIENT_URL}`;
       res.redirect(redirectUrl);
    } catch (error: unknown) {
       if (axios.isAxiosError(error)) {
