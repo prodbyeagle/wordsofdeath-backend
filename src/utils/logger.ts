@@ -20,6 +20,18 @@ const styles: Record<LogLevel, string> = {
 };
 
 /**
+ * Formats the current date and time as HH:mm:ss.
+ * @returns The formatted timestamp.
+ */
+const formatTimestamp = (): string => {
+   const now = new Date();
+   const hours = String(now.getHours()).padStart(2, '0');
+   const minutes = String(now.getMinutes()).padStart(2, '0');
+   const seconds = String(now.getSeconds()).padStart(2, '0');
+   return `${hours}:${minutes}:${seconds}`;
+};
+
+/**
  * Logs messages based on the provided log level and debug mode.
  * @param level - The log level ('info', 'warn', 'error', 'debug').
  * @param message - The message to log.
@@ -27,7 +39,7 @@ const styles: Record<LogLevel, string> = {
 export const log = (level: LogLevel, message: string): void => {
    if (level === 'debug' && !debugMode) return;
 
-   const timestamp = new Date().toISOString();
+   const timestamp = formatTimestamp();
    const prefix = `[${level.toUpperCase()}]`;
 
    switch (level) {
