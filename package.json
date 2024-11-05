@@ -1,12 +1,10 @@
 {
   "name": "wordsofdeath-backend",
-  "version": "1.0.0",
-  "description": "wordsofdeath backend",
+  "version": "0.0.0",
   "main": "src/server.ts",
   "scripts": {
     "start": "npm run build && node dist/server.js",
-    "build": "tsc",
-    "dev": "ts-node-dev src/server.ts"
+    "build": "tsc"
   },
   "dependencies": {
     "@types/express-session": "latest",
@@ -17,7 +15,8 @@
     "express": "latest",
     "express-session": "latest",
     "jsonwebtoken": "latest",
-    "mongodb": "latest"
+    "mongodb": "latest",
+    "ulid": "latest"
   },
   "devDependencies": {
     "@types/cookie-parser": "latest",
@@ -25,9 +24,6 @@
     "@types/express": "latest",
     "@types/jsonwebtoken": "latest",
     "@types/node": "latest",
-    "ts-node": "latest",
-    "ts-node-dev": "latest",
     "typescript": "latest"
-  },
-  "license": "MIT"
+  }
 }
