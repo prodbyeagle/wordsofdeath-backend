@@ -92,18 +92,11 @@ export const discordCallback = async (req: Request, res: Response): Promise<void
       }
 
       const token = jwt.sign({ username, avatar, id }, JWT_SECRET, { expiresIn: '7d' });
-      log("info", "Setting authentication cookie.");
-      res.cookie('wordsofdeath', token, {
-         maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-         httpOnly: true,
-         secure: true,
-         sameSite: 'none',
-         path: '/',
-      });
+      log("info", "Returning JWT token to client for LocalStorage.");
+
+      res.redirect(`${process.env.CLIENT_URL}/signin/callback?token=${token}`);
 
       log("info", `User ${username} authenticated successfully. Redirecting to client.`);
-      const redirectUrl = `${process.env.CLIENT_URL}`;
-      res.redirect(redirectUrl);
    } catch (error: unknown) {
       if (axios.isAxiosError(error)) {
          log("error", `Error during Discord authentication (Axios): ${error.response?.data}`);
