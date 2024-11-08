@@ -6,7 +6,7 @@ router.get('/', (req, res) => {
    const uptime = process.uptime();
 
    const status = {
-      uptime: uptime,
+      uptime: uptime.toFixed(2),
       message: "Hey! from @prodbyeagle. I see you.",
    };
 

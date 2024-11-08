@@ -19,8 +19,10 @@ export const searchEntries = async (req: Request, res: Response): Promise<void> 
 
    try {
       const database = await connectDB();
-      const words = await database.collection('entries').find({ entry: new RegExp(query, 'i') }).limit(3).toArray();
+      const words = await database.collection('entries').find({ entry: new RegExp(query, 'i') }).limit(10).toArray();
       const categories = await database.collection('categories').find({}).toArray();
+
+      // log("info", `User Searched for: Words: ${words} / Categories: ${categories}`)
 
       res.status(200).json({ words, categories });
    } catch (error) {

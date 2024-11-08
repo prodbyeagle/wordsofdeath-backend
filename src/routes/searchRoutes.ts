@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { searchEntries } from '../controllers/searchController';
+import { authenticateToken } from '../middleware/authMiddleware';
 
 const router = Router();
 
@@ -12,6 +13,6 @@ const router = Router();
  * @returns {Error} 400 - Query must not be empty
  * @returns {Error} 500 - Error retrieving search results
  */
-router.get('/api/search', searchEntries);
+router.get('/api/search', authenticateToken, searchEntries);
 
 export default router;

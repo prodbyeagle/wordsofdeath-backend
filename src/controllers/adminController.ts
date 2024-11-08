@@ -8,6 +8,11 @@ import { log } from '../utils/logger';
 
 dotenv.config();
 
+/**
+ * Handles the Check from the User for admin authentication.
+ * @param req - The request object containing the incoming HTTP request.
+ * @param res - The response object used to send a response to the client.
+ */
 export const checkAdmin = async (req: Request, res: Response) => {
    log("debug", `Full request query object: ${JSON.stringify(req.query)}`);
 

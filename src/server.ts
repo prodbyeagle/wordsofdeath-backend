@@ -6,6 +6,7 @@ import cookieParser from 'cookie-parser';
 import authRoutes from './routes/authRoutes';
 import entryRoutes from './routes/entryRoutes';
 import adminRoutes from './routes/adminRoutes';
+import userRoutes from './routes/userRoutes'
 import searchRoutes from './routes/searchRoutes';
 import whitelistRoutes from './routes/whitelistRoutes';
 import { initializeLogger, log } from './utils/logger';
@@ -47,9 +48,10 @@ app.use(whitelistRoutes);
 app.use(statusRoutes);
 app.use(adminRoutes);
 app.use(searchRoutes);
+app.use(userRoutes);
 
 app.listen(PORT, () => {
-   console.log(`[SERVER]: Listening on port ${PORT}`);
+   log("info",`[SERVER]: Listening on port ${PORT}`);
 });
 
 export default app;
