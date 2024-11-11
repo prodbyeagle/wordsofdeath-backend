@@ -3,9 +3,6 @@ import { Request, Response } from 'express';
 import { connectDB } from '../config/db';
 import { log } from '../utils/logger';
 
-const userCache: { [key: string]: { data: any; expiresAt: number } } = {};
-const CACHE_DURATION_MS = 30 * 60 * 1000;
-
 /**
  * Retrieves a user by their ID.
  * @param req - The request object containing the user's ID.
@@ -14,12 +11,6 @@ const CACHE_DURATION_MS = 30 * 60 * 1000;
  */
 export const getUserById = async (req: Request, res: Response): Promise<void> => {
    const userId = req.params.id;
-
-   const cachedUser = userCache[userId];
-   if (cachedUser && cachedUser.expiresAt > Date.now()) {
-      res.status(200).json(cachedUser.data);
-      return;
-   }
 
    try {
       const database = await connectDB();
@@ -30,11 +21,6 @@ export const getUserById = async (req: Request, res: Response): Promise<void> =>
          res.status(404).send('User not found');
          return;
       }
-
-      userCache[userId] = {
-         data: user,
-         expiresAt: Date.now() + CACHE_DURATION_MS,
-      };
 
       res.status(200).json(user);
    } catch (error) {
@@ -52,12 +38,6 @@ export const getUserById = async (req: Request, res: Response): Promise<void> =>
 export const getUserByUsername = async (req: Request, res: Response): Promise<void> => {
    const username = req.params.username;
 
-   const cachedUser = userCache[username];
-   if (cachedUser && cachedUser.expiresAt > Date.now()) {
-      res.status(200).json(cachedUser.data);
-      return;
-   }
-
    try {
       const database = await connectDB();
       const user = await database.collection('users').findOne({ username });
@@ -67,11 +47,6 @@ export const getUserByUsername = async (req: Request, res: Response): Promise<vo
          res.status(404).send('User not found');
          return;
       }
-
-      userCache[username] = {
-         data: user,
-         expiresAt: Date.now() + CACHE_DURATION_MS,
-      };
 
       res.status(200).json(user);
    } catch (error) {
