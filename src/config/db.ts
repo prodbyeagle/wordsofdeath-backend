@@ -1,5 +1,6 @@
 import { MongoClient, Db } from 'mongodb';
 import dotenv from 'dotenv';
+import { log } from '../utils/logger';
 
 dotenv.config();
 
@@ -16,7 +17,7 @@ export const connectDB = async (): Promise<Db> => {
    if (!db) {
       await client.connect();
       db = client.db("wordsofdeath");
-      console.log("[SERVER]: Database connected and whitelist initialized.");
+      log("info", "[SERVER]: Database connected and whitelist initialized.");
    }
    return db;
 };
