@@ -1,5 +1,3 @@
-// src/utils/logger.ts
-
 type LogLevel = 'info' | 'warn' | 'error' | 'debug';
 
 let debugMode = false;
@@ -17,6 +15,13 @@ const styles: Record<LogLevel, string> = {
    warn: 'color: orange; font-weight: bold;',
    error: 'color: red; font-weight: bold;',
    debug: 'color: purple; font-weight: bold;',
+};
+
+const ansiCodes: Record<LogLevel, string> = {
+   info: '\x1b[36m',
+   warn: '\x1b[33m',
+   error: '\x1b[31m',
+   debug: '\x1b[35m',
 };
 
 /**
@@ -42,18 +47,34 @@ export const log = (level: LogLevel, message: string): void => {
    const timestamp = formatTimestamp();
    const prefix = `[${level.toUpperCase()}]`;
 
-   switch (level) {
-      case 'info':
-         console.info(`%c${prefix} %c${timestamp} - ${message}`, styles.info, 'color: inherit;');
-         break;
-      case 'warn':
-         console.warn(`%c${prefix} %c${timestamp} - ${message}`, styles.warn, 'color: inherit;');
-         break;
-      case 'error':
-         console.error(`%c${prefix} %c${timestamp} - ${message}`, styles.error, 'color: inherit;');
-         break;
-      case 'debug':
-         console.log(`%c${prefix} %c${timestamp} - ${message}`, styles.debug, 'color: inherit;');
-         break;
+   const isBrowser = typeof window !== 'undefined' && window.console;
+   const formattedMessage = `${prefix} ${timestamp} - ${message}`;
+
+   if (isBrowser) {
+      switch (level) {
+         case 'info':
+            console.info(`%c${formattedMessage}`, styles.info);
+            break;
+         case 'warn':
+            console.warn(`%c${formattedMessage}`, styles.warn);
+            break;
+         case 'error':
+            console.error(`%c${formattedMessage}`, styles.error);
+            break;
+         case 'debug':
+            console.log(`%c${formattedMessage}`, styles.debug);
+            break;
+      }
+   } else {
+      const reset = '\x1b[0m';
+      const color = ansiCodes[level] || '\x1b[37m';
+      switch (level) {
+         case 'info':
+         case 'warn':
+         case 'error':
+         case 'debug':
+            console.log(`${color}${formattedMessage}${reset}`);
+            break;
+      }
    }
 };
