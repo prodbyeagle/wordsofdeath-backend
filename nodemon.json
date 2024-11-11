@@ -3,5 +3,5 @@
       "src"
    ],
    "ext": "ts,json",
-   "exec": "node dist/server.js"
+   "exec": "tsc && node dist/server.js"
 }
