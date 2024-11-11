@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "main": "src/server.ts",
   "scripts": {
-    "start": "npm run build && node dist/server.js",
+    "start": "npm run build && nodemon dist/server.js",
     "build": "tsc"
   },
   "dependencies": {
@@ -16,6 +16,7 @@
     "express-session": "latest",
     "jsonwebtoken": "latest",
     "mongodb": "latest",
+    "nodemon": "latest",
     "ulid": "latest"
   },
   "devDependencies": {
