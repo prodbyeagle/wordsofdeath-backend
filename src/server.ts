@@ -6,7 +6,8 @@ import cookieParser from 'cookie-parser';
 import authRoutes from './routes/authRoutes';
 import entryRoutes from './routes/entryRoutes';
 import adminRoutes from './routes/adminRoutes';
-import userRoutes from './routes/userRoutes'
+import userRoutes from './routes/userRoutes';
+import categoryRoutes from './routes/categoryRoutes';
 import searchRoutes from './routes/searchRoutes';
 import whitelistRoutes from './routes/whitelistRoutes';
 import { initializeLogger, log } from './utils/logger';
@@ -21,10 +22,10 @@ const DEBUG = process.env.DEBUG === 'true';
 initializeLogger(DEBUG);
 
 const allowedOrigins = [
-   'https://wordsofdeath-backend.vercel.app', // production site
-   'https://wordsofdeath.vercel.app', // production site
-   'http://localhost:3000', // development site
-   'http://localhost:3001' // development site
+   'https://wordsofdeath-backend.vercel.app',
+   'https://wordsofdeath.vercel.app',
+   'http://localhost:3000',
+   'http://localhost:3001'
 ];
 
 const corsOptions: cors.CorsOptions = {
@@ -49,9 +50,10 @@ app.use(statusRoutes);
 app.use(adminRoutes);
 app.use(searchRoutes);
 app.use(userRoutes);
+app.use(categoryRoutes);
 
 app.listen(PORT, () => {
-   log("info",`[SERVER]: Listening on port ${PORT}`);
+   log("info", `[SERVER]: Listening on port ${PORT}`);
 });
 
 export default app;
