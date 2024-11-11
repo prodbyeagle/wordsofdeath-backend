@@ -29,6 +29,8 @@ export const fetchEntriesByCategory = async (req: Request, res: Response): Promi
       }
 
       log("info", `${entries.length} entries retrieved for category: ${name}`);
+
+//max. 3 entries
       res.status(200).json(entries);
    } catch (error) {
       log("error", `Error fetching entries for category: ${error}`);
