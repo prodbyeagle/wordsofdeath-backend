@@ -1,3 +1,5 @@
+// noinspection JSUnusedGlobalSymbols,ES6UnusedImports
+
 import * as express from 'express';
 
 declare global {
