@@ -12,7 +12,7 @@ import { ulid } from 'ulid';
  * @returns {Promise<void>}
  */
 export const createEntry = async (req: Request, res: Response): Promise<void> => {
-   const { entry, type, categories, variation } = req.body;
+   const { entry, type, categories, variation, timestamp, author, authorId } = req.body;
 
    if (!entry || !type || !categories || !variation) {
       log("error", "All fields must be filled.");
@@ -27,14 +27,25 @@ export const createEntry = async (req: Request, res: Response): Promise<void> =>
       entry,
       type,
       categories,
-      author: (req.user as any).username,
-      authorId: (req.user as any).id,
-      timestamp: new Date().toISOString(),
+      author: author || (req.user as any).username,
+      authorId: authorId || (req.user as any).id,
+      timestamp: timestamp || new Date().toISOString(),
       variation,
    };
 
    try {
       const database = await connectDB();
+
+      const existingEntry = await database.collection('entries').findOne({
+         entry,
+      });
+
+      if (existingEntry) {
+         log("error", `Entry already exists: ${entry}`);
+         res.status(409).send('Error: Duplicate entry. This entry already exists.');
+         return;
+      }
+
       await database.collection('entries').insertOne(newEntry);
       log("info", `New entry created: ${entry} (ID: ${mainId})`);
       res.status(201).send({ message: 'Entry successfully created', entryId: mainId });
@@ -73,7 +84,7 @@ export const getEntries = async (req: Request, res: Response): Promise<void> => 
  * @returns {Promise<void>}
  */
 export const getEntryById = async (req: Request, res: Response): Promise<void> => {
-   const entryId = req.params.id; // Hier wird die ULID entgegengenommen
+   const entryId = req.params.id;
 
    try {
       const database = await connectDB();
@@ -149,4 +160,3 @@ export const getEntriesByAuthor = async (req: Request, res: Response): Promise<v
       res.status(500).send('Error retrieving entries by author.');
    }
 };
-
