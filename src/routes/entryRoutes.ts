@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { createEntry, getEntries, getEntryById, deleteEntry, getEntriesByAuthor } from '../controllers/entryController';
+import { createEntry, getEntries, getEntryById, deleteEntry, getEntriesByAuthor, getEntryMetadata } from '../controllers/entryController';
 import { authenticateToken } from '../middleware/authMiddleware';
 
 const router = Router();
@@ -59,5 +59,17 @@ router.delete('/api/entries/:id', authenticateToken, deleteEntry);
  * @returns {Error} 500 - Internal server error
  */
 router.get('/api/entries/u/:username', authenticateToken, getEntriesByAuthor);
+
+/**
+ * Route to retrieve metadata for an entry by ID.
+ * No authentication required.
+ * @route GET /api/entries/metadata/{id}
+ * @group Entries - Operations about entries
+ * @param {string} id.path.required - The ID of the entry to retrieve metadata for
+ * @returns {object} 200 - The entry metadata object
+ * @returns {Error} 404 - Metadata not found
+ * @returns {Error} 500 - Internal server error
+ */
+router.get('/api/entries/metadata/:id', getEntryMetadata);
 
 export default router;

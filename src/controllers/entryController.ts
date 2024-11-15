@@ -201,3 +201,42 @@ export const getEntriesByAuthor = async (req: Request, res: Response): Promise<v
       res.status(500).send('Error retrieving entries by author.');
    }
 };
+
+/**
+ * Retrieves metadata for an entry by ID.
+ * @param req - The request object containing the incoming HTTP request.
+ * @param res - The response object used to send a response to the client.
+ * @returns {Promise<void>}
+ */
+export const getEntryMetadata = async (req: Request, res: Response): Promise<void> => {
+   const entryId = req.params.id;
+
+   try {
+      const database = await connectDB();
+      const entry = await database.collection('entries').findOne(
+         { id: entryId },
+         {
+            projection: {
+               id: 1,
+               entry: 1,
+               type: 1,
+               categories: 1,
+               author: 1,
+               timestamp: 1,
+            },
+         }
+      );
+
+      if (!entry) {
+         log("warn", `Metadata not found for entry: ID ${entryId}`);
+         res.status(404).send('Metadata not found.');
+         return;
+      }
+
+      log("info", `Metadata retrieved for entry: ID ${entryId}`);
+      res.status(200).json(entry);
+   } catch (error) {
+      log("error", `Error retrieving metadata: ${error}`);
+      res.status(500).send('Error retrieving metadata.');
+   }
+};
