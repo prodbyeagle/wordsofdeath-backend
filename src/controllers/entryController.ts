@@ -4,6 +4,9 @@ import { Request, Response } from 'express';
 import { connectDB } from '../config/db';
 import { log } from '../utils/logger';
 import { ulid } from 'ulid';
+import axios from 'axios';
+
+const DISCORD_WEBHOOK_URL = process.env.DISCORD_WEBHOOK;
 
 /**
  * Creates a new entry.
@@ -15,7 +18,7 @@ export const createEntry = async (req: Request, res: Response): Promise<void> =>
    const { entry, type, categories, variation, timestamp, author, authorId } = req.body;
 
    if (!entry || !type || !categories || !variation) {
-      log("error", "All fields must be filled.");
+      log('error', 'All fields must be filled.');
       res.status(400).send('Error: All fields must be filled.');
       return;
    }
@@ -36,21 +39,59 @@ export const createEntry = async (req: Request, res: Response): Promise<void> =>
    try {
       const database = await connectDB();
 
-      const existingEntry = await database.collection('entries').findOne({
-         entry,
-      });
+      const existingEntry = await database.collection('entries').findOne({ entry });
 
       if (existingEntry) {
-         log("error", `Entry already exists: ${entry}`);
+         log('error', `Entry already exists: ${entry}`);
          res.status(409).send('Error: Duplicate entry. This entry already exists.');
          return;
       }
 
       await database.collection('entries').insertOne(newEntry);
-      log("info", `New entry created: ${entry} (ID: ${mainId})`);
+      log('info', `New entry created: ${entry} (ID: ${mainId})`);
+
+      if (DISCORD_WEBHOOK_URL) {
+         const embed = {
+            embeds: [
+               {
+                  title: `🚀 New Entry Created!`,
+                  description: `**${entry}** was created!`,
+                  color: 0x1e90ff,
+                  fields: [
+                     {
+                        name: 'Author',
+                        value: author || (req.user as any).username || 'Unknown',
+                        inline: true,
+                     },
+                     {
+                        name: 'Type',
+                        value: type,
+                        inline: true,
+                     },
+                     {
+                        name: 'Categories',
+                        value: categories.join(', '),
+                        inline: false,
+                     },
+                  ],
+                  footer: {
+                     text: `Entry ID: ${mainId}`,
+                  },
+                  timestamp: new Date().toISOString(),
+                  url: `https://wordsofdeath.vercel.app/e/${mainId}`,
+               },
+            ],
+         };
+
+         await axios.post(DISCORD_WEBHOOK_URL, embed);
+         log('info', 'Discord webhook with embed sent successfully.');
+      } else {
+         log('warn', 'Discord webhook URL is not configured.');
+      }
+
       res.status(201).send({ message: 'Entry successfully created', entryId: mainId });
    } catch (error) {
-      log("error", `Error creating the entry: ${error}`);
+      log('error', `Error creating the entry: ${error}`);
       res.status(500).send('Error creating the entry.');
    }
 };

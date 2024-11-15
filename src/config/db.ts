@@ -10,8 +10,8 @@ let db: Db;
 /**
  * Connects to the MongoDB database.
  * If the database is already connected, it returns the existing connection.
- * @returns {Promise<Db>} The MongoDB database instance.
- * @throws {Error} Throws an error if the connection fails.
+ * @returns { Promise<Db> } The MongoDB database instance.
+ * @throws { Error } Throws an error if the connection fails.
  */
 export const connectDB = async (): Promise<Db> => {
    if (!db) {
