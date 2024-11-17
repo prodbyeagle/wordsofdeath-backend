@@ -40,8 +40,9 @@ const formatTimestamp = (): string => {
  * Logs messages based on the provided log level and debug mode.
  * @param level - The log level ('info', 'warn', 'error', 'debug').
  * @param message - The message to log.
+ * @param data - Optional additional data to log.
  */
-export const log = (level: LogLevel, message: string): void => {
+export const log = (level: LogLevel, message: string, data?: any): void => {
    if (level === 'debug' && !debugMode) return;
 
    const timestamp = formatTimestamp();
@@ -53,16 +54,16 @@ export const log = (level: LogLevel, message: string): void => {
    if (isBrowser) {
       switch (level) {
          case 'info':
-            console.info(`%c${formattedMessage}`, styles.info);
+            console.info(`%c${formattedMessage}`, styles.info, data);
             break;
          case 'warn':
-            console.warn(`%c${formattedMessage}`, styles.warn);
+            console.warn(`%c${formattedMessage}`, styles.warn, data);
             break;
          case 'error':
-            console.error(`%c${formattedMessage}`, styles.error);
+            console.error(`%c${formattedMessage}`, styles.error, data);
             break;
          case 'debug':
-            console.log(`%c${formattedMessage}`, styles.debug);
+            console.log(`%c${formattedMessage}`, styles.debug, data);
             break;
       }
    } else {

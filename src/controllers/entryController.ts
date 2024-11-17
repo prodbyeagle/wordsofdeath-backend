@@ -15,70 +15,83 @@ const DISCORD_WEBHOOK_URL = process.env.DISCORD_WEBHOOK;
  * @returns {Promise<void>}
  */
 export const createEntry = async (req: Request, res: Response): Promise<void> => {
+   log('debug', 'Incoming request body:', req.body);
+
    const { entry, type, categories, variation, timestamp, author, authorId } = req.body;
 
    if (!entry || !type || !categories || !variation) {
-      log('error', 'All fields must be filled.');
+      log('error', 'Validation failed: Missing required fields.');
       res.status(400).send('Error: All fields must be filled.');
       return;
    }
 
    const mainId = ulid();
+   log('debug', `Generated unique ID for new entry: ${mainId}`);
 
    const newEntry = {
       id: mainId,
       entry,
       type,
       categories,
-      author: author || (req.user as any).username,
-      authorId: authorId || (req.user as any).id,
+      author: author || (req.user as any)?.username,
+      authorId: authorId || (req.user as any)?.id,
       timestamp: timestamp || new Date().toISOString(),
       variation,
    };
 
+   log('debug', 'New entry object:', newEntry);
+
    try {
       const database = await connectDB();
+      log('debug', 'Connected to database.');
 
       const existingEntry = await database.collection('entries').findOne({ entry });
-
       if (existingEntry) {
-         log('error', `Entry already exists: ${entry}`);
+         log('error', `Duplicate entry detected: ${entry}`);
          res.status(409).send('Error: Duplicate entry. This entry already exists.');
          return;
       }
 
+      log('debug', 'No duplicate entry found. Proceeding to create a new entry.');
       await database.collection('entries').insertOne(newEntry);
-      log('info', `New entry created: ${entry} (ID: ${mainId})`);
+      log('info', `New entry successfully created: ${entry} (ID: ${mainId})`);
 
       if (DISCORD_WEBHOOK_URL) {
+         log('debug', 'Discord webhook URL is configured. Preparing payload.');
+
          const embed = {
             embeds: [
                {
-                  title: `🚀 New Entry Created!`,
-                  description: `**${entry}** was created!`,
+                  title: `🔨✅ Hamma! <- Zum Eintrag.`,
+                  description: `**'${entry}'** wurde erstellt!`,
                   color: 0x1e90ff,
                   fields: [
                      {
-                        name: 'Author',
-                        value: author || (req.user as any).username || 'Unknown',
-                        inline: true,
+                        name: 'Ersteller',
+                        value: author || (req.user as any)?.username || 'Unbekannter User',
+                        inline: false,
                      },
                      {
-                        name: 'Type',
+                        name: 'Typ',
                         value: type,
-                        inline: true,
+                        inline: false,
                      },
                      {
-                        name: 'Categories',
+                        name: 'Kategorien',
                         value: categories.join(', '),
+                        inline: false,
+                     },
+                     {
+                        name: 'Variation',
+                        value: variation.join(', '),
                         inline: false,
                      },
                   ],
                   footer: {
-                     text: `Entry ID: ${mainId}`,
+                     text: `Entry ID: ${mainId}`, // Fix für konsistente ID
                   },
                   timestamp: new Date().toISOString(),
-                  url: `https://wordsofdeath.vercel.app/e/${mainId}`,
+                  url: `https://wordsofdeath.vercel.app/e/${mainId}`, // Fix für konsistente ID
                },
             ],
          };
@@ -91,10 +104,15 @@ export const createEntry = async (req: Request, res: Response): Promise<void> =>
 
       res.status(201).send({ message: 'Entry successfully created', entryId: mainId });
    } catch (error) {
-      log('error', `Error creating the entry: ${error}`);
+      if (error instanceof Error) {
+         log('error', `Error creating the entry: ${error.message}`);
+      } else {
+         log('error', 'Error creating the entry: Unknown error type.');
+      }
       res.status(500).send('Error creating the entry.');
    }
 };
+
 
 /**
  * Retrieves all entries.
@@ -213,7 +231,7 @@ export const getEntryMetadata = async (req: Request, res: Response): Promise<voi
 
    try {
       const database = await connectDB();
-      const entry = await database.collection('entries').findOne(
+      const entry = await database.collection("entries").findOne(
          { id: entryId },
          {
             projection: {
@@ -229,14 +247,28 @@ export const getEntryMetadata = async (req: Request, res: Response): Promise<voi
 
       if (!entry) {
          log("warn", `Metadata not found for entry: ID ${entryId}`);
-         res.status(404).send('Metadata not found.');
+         res.status(404).send("Metadata not found.");
          return;
       }
 
+      const user = await database.collection("users").findOne(
+         { username: entry.author },
+         {
+            projection: {
+               avatar: 1,
+            },
+         }
+      );
+
+      const responseData = {
+         ...entry,
+         avatar: user?.avatar || null,
+      };
+
       log("info", `Metadata retrieved for entry: ID ${entryId}`);
-      res.status(200).json(entry);
+      res.status(200).json(responseData);
    } catch (error) {
       log("error", `Error retrieving metadata: ${error}`);
-      res.status(500).send('Error retrieving metadata.');
+      res.status(500).send("Error retrieving metadata.");
    }
 };
