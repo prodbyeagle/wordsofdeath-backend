@@ -92,7 +92,7 @@ export const discordCallback = async (req: Request, res: Response): Promise<void
          log("info", `User ${username} already exists in the database.`);
       }
 
-      const token = jwt.sign({ username, avatar, id }, JWT_SECRET, { expiresIn: '7d' });
+      const token = jwt.sign({ username, avatar, id }, JWT_SECRET);
       log("info", "Returning JWT token to client for LocalStorage.");
 
       res.redirect(`${process.env.CLIENT_URL}/signin/callback?token=${token}`);
