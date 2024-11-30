@@ -89,7 +89,12 @@ export const discordCallback = async (req: Request, res: Response): Promise<void
          });
          log("info", `New user added to the database: ${username}`);
       } else {
-         log("info", `User ${username} already exists in the database.`);
+         if (existingUser.avatar !== avatar) {
+            log("info", `Updating avatar for user ${username} as it has changed.`);
+            await usersCollection.updateOne({ id }, { $set: { avatar } });
+         } else {
+            log("info", `Avatar for user ${username} is up-to-date.`);
+         }
       }
 
       const token = jwt.sign({ username, avatar, id }, JWT_SECRET);
