@@ -9,9 +9,7 @@ const router = Router();
  * @route POST /api/entries
  * @group Entries - Operations about entries
  * @param {string} entry.body.required - The content of the entry
- * @param {string} type.body.required - The type of the entry
  * @param {Array<string>} categories.body.required - The categories associated with the entry
- * @param {string} variation.body.required - The variation of the entry
  * @returns {object} 201 - The created entry object
  * @returns {Error} 400 - Validation error
  * @returns {Error} 500 - Internal server error

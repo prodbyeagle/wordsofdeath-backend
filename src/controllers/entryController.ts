@@ -17,9 +17,9 @@ const DISCORD_WEBHOOK_URL = process.env.DISCORD_WEBHOOK;
 export const createEntry = async (req: Request, res: Response): Promise<void> => {
    log('debug', 'Incoming request body:', req.body);
 
-   const { entry, type, categories, variation, timestamp, author, authorId } = req.body;
+   const { entry, categories, timestamp, author, authorId } = req.body;
 
-   if (!entry || !type || !categories || !variation) {
+   if (!entry || !categories) {
       log('error', 'Validation failed: Missing required fields.');
       res.status(400).send('Error: All fields must be filled.');
       return;
@@ -31,12 +31,10 @@ export const createEntry = async (req: Request, res: Response): Promise<void> =>
    const newEntry = {
       id: mainId,
       entry,
-      type,
       categories,
       author: author || (req.user as any)?.username,
       authorId: authorId || (req.user as any)?.id,
       timestamp: timestamp || new Date().toISOString(),
-      variation,
    };
 
    log('debug', 'New entry object:', newEntry);
@@ -62,8 +60,8 @@ export const createEntry = async (req: Request, res: Response): Promise<void> =>
          const embed = {
             embeds: [
                {
-                  title: `🔨✅ Hamma! <- Zum Eintrag.`,
-                  description: `**'${entry}'** wurde erstellt!`,
+                  title: `✅ Hamma! <- Zum Eintrag.`,
+                  description: `**${entry}** wurde erstellt!`,
                   color: 0x1e90ff,
                   fields: [
                      {
@@ -72,26 +70,13 @@ export const createEntry = async (req: Request, res: Response): Promise<void> =>
                         inline: false,
                      },
                      {
-                        name: 'Typ',
-                        value: type,
-                        inline: false,
-                     },
-                     {
                         name: 'Kategorien',
                         value: categories.join(', '),
                         inline: false,
                      },
-                     {
-                        name: 'Variation',
-                        value: variation.join(', '),
-                        inline: false,
-                     },
                   ],
-                  footer: {
-                     text: `Entry ID: ${mainId}`, // Fix für konsistente ID
-                  },
                   timestamp: new Date().toISOString(),
-                  url: `https://wordsofdeath.vercel.app/e/${mainId}`, // Fix für konsistente ID
+                  url: `https://wordsofdeath.vercel.app/e/${mainId}`,
                },
             ],
          };
