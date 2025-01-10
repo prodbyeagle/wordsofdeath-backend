@@ -26,17 +26,6 @@ router.post('/api/entries', authenticateToken, createEntry);
 router.get('/api/entries', authenticateToken, getEntries);
 
 /**
- * Route to retrieve an entry by its ID.
- * @route GET /api/entries/{id}
- * @group Entries - Operations about entries
- * @param {string} id.path.required - The ID of the entry to retrieve
- * @returns {object} 200 - The entry object
- * @returns {Error} 404 - Entry not found
- * @returns {Error} 500 - Internal server error
- */
-router.get('/api/entries/:id', authenticateToken, getEntryById);
-
-/**
  * Route to delete an entry by its ID.
  * @route DELETE /api/entries/{id}
  * @group Entries - Operations about entries
