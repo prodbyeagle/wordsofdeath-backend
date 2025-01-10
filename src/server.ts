@@ -7,7 +7,6 @@ import authRoutes from './routes/authRoutes';
 import entryRoutes from './routes/entryRoutes';
 import adminRoutes from './routes/adminRoutes';
 import userRoutes from './routes/userRoutes';
-import searchRoutes from './routes/searchRoutes';
 import whitelistRoutes from './routes/whitelistRoutes';
 import { initializeLogger, log } from './utils/logger';
 import statusRoutes from './controllers/statusController';
@@ -47,7 +46,6 @@ app.use(entryRoutes);
 app.use(whitelistRoutes);
 app.use(statusRoutes);
 app.use(adminRoutes);
-app.use(searchRoutes);
 app.use(userRoutes);
 
 app.listen(PORT, () => {
