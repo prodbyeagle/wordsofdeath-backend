@@ -9,7 +9,7 @@ const router = Router();
  * @group Authentication - Operations related to user authentication
  * @returns {object} 302 - Redirects to the Discord authentication page
  */
-router.get('api/auth/discord', discordAuth);
+router.get('/api/auth', discordAuth);
 
 /**
  * Route to handle the callback from Discord after authentication.
@@ -20,6 +20,6 @@ router.get('api/auth/discord', discordAuth);
  * @returns {Error} 403 - User not on the whitelist
  * @returns {Error} 500 - Internal server error
  */
-router.get('/auth/discord/callback', discordCallback);
+router.get('/api/auth/c', discordCallback);
 
 export default router;
