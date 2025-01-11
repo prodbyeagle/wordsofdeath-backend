@@ -15,8 +15,6 @@ const DISCORD_WEBHOOK_URL = process.env.DISCORD_WEBHOOK;
  * @returns {Promise<void>}
  */
 export const createEntry = async (req: Request, res: Response): Promise<void> => {
-   log('debug', 'Incoming request body:', req.body);
-
    const { entry, categories, timestamp, author, authorId } = req.body;
 
    if (!entry || !categories) {
@@ -26,7 +24,6 @@ export const createEntry = async (req: Request, res: Response): Promise<void> =>
    }
 
    const mainId = ulid();
-   log('debug', `Generated unique ID for new entry: ${mainId}`);
 
    const newEntry = {
       id: mainId,
@@ -37,11 +34,8 @@ export const createEntry = async (req: Request, res: Response): Promise<void> =>
       timestamp: timestamp || new Date().toISOString(),
    };
 
-   log('debug', 'New entry object:', newEntry);
-
    try {
       const database = await connectDB();
-      log('debug', 'Connected to database.');
 
       const existingEntry = await database.collection('entries').findOne({ entry });
       if (existingEntry) {
@@ -50,13 +44,9 @@ export const createEntry = async (req: Request, res: Response): Promise<void> =>
          return;
       }
 
-      log('debug', 'No duplicate entry found. Proceeding to create a new entry.');
       await database.collection('entries').insertOne(newEntry);
-      log('info', `New entry successfully created: ${entry} (ID: ${mainId})`);
 
       if (DISCORD_WEBHOOK_URL) {
-         log('debug', 'Discord webhook URL is configured. Preparing payload.');
-
          const embed = {
             embeds: [
                {
@@ -82,9 +72,6 @@ export const createEntry = async (req: Request, res: Response): Promise<void> =>
          };
 
          await axios.post(DISCORD_WEBHOOK_URL, embed);
-         log('info', 'Discord webhook with embed sent successfully.');
-      } else {
-         log('warn', 'Discord webhook URL is not configured.');
       }
 
       res.status(201).send({ message: 'Entry successfully created', entryId: mainId });
@@ -113,7 +100,6 @@ export const getEntries = async (req: Request, res: Response): Promise<void> => 
          .sort({ _id: -1 })
          .toArray();
 
-      log("info", `${entries.length} entries retrieved.`);
       res.status(200).json(entries);
    } catch (error) {
       log("error", `Error retrieving entries: ${error}`);
@@ -135,12 +121,11 @@ export const getEntryById = async (req: Request, res: Response): Promise<void> =
       const entry = await database.collection('entries').findOne({ id: entryId });
 
       if (!entry) {
-         log("warn", `Entry not found: ID ${entryId}`);
+         log("error", `Entry not found: ID ${entryId}`);
          res.status(404).send('Entry not found.');
          return;
       }
 
-      log("info", `Entry retrieved: ID ${entryId}`);
       res.status(200).json(entry);
    } catch (error) {
       log("error", `Error retrieving entry: ${error}`);
@@ -162,12 +147,11 @@ export const deleteEntry = async (req: Request, res: Response): Promise<void> =>
       const result = await database.collection('entries').deleteOne({ id: entryId });
 
       if (result.deletedCount === 0) {
-         log("warn", `Entry not found: ID ${entryId}`);
+         log("error", `Entry not found: ID ${entryId}`);
          res.status(404).send('Entry not found.');
          return;
       }
 
-      log("info", `Entry successfully deleted: ID ${entryId}`);
       res.status(200).send('Entry successfully deleted.');
    } catch (error) {
       log("error", `Error deleting entry: ${error}`);
@@ -192,12 +176,11 @@ export const getEntriesByAuthor = async (req: Request, res: Response): Promise<v
          .toArray();
 
       if (entries.length === 0) {
-         log("warn", `No entries found for user: ${authorUsername}`);
+         log("error", `No entries found for user: ${authorUsername}`);
          res.status(404).send('No entries found for this user.');
          return;
       }
 
-      log("info", `${entries.length} entries retrieved for user: ${authorUsername}`);
       res.status(200).json(entries);
    } catch (error) {
       log("error", `Error retrieving entries by author: ${error}`);

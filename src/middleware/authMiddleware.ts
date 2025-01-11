@@ -30,7 +30,6 @@ export const authenticateToken = (req: Request, res: Response, next: NextFunctio
          return;
       }
 
-      // log("info", `Token successfully verified for user: ${(user as any).username}`);
       req.user = user as any;
       next();
    });
