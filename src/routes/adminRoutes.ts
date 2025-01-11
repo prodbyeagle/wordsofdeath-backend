@@ -10,6 +10,6 @@ const asyncHandler = (fn: (req: Request, res: Response, next: NextFunction) => P
       fn(req, res, next).catch(next);
    };
 
-router.get('/auth/admin', asyncHandler(checkAdmin));
+router.get('/api/auth/admin', asyncHandler(checkAdmin));
 
 export default router;

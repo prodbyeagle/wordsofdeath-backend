@@ -72,7 +72,7 @@ export const discordCallback = async (req: Request, res: Response): Promise<void
 
       if (!userInWhitelist) {
          log("warn", `User ${username} is not on the whitelist.`);
-         res.redirect(403, 'https://wordsofdeath.vercel.app/access-denied');
+         res.redirect(403, 'https://wordsofdeath.vercel.app/error/access-denied');
          return;
       }
 

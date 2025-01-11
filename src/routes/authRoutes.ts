@@ -9,7 +9,7 @@ const router = Router();
  * @group Authentication - Operations related to user authentication
  * @returns {object} 302 - Redirects to the Discord authentication page
  */
-router.get('/auth/discord', discordAuth);
+router.get('api/auth/discord', discordAuth);
 
 /**
  * Route to handle the callback from Discord after authentication.
