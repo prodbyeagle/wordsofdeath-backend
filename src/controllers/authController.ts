@@ -5,7 +5,6 @@ import axios from 'axios';
 import jwt from 'jsonwebtoken';
 import { connectDB } from '../config/db';
 import { log } from '../utils/logger';
-import path from "node:path";
 
 const JWT_SECRET = process.env.JWT_SECRET || 'secret';
 const DISCORD_CLIENT_ID = process.env.DISCORD_CLIENT_ID as string;
@@ -73,7 +72,7 @@ export const discordCallback = async (req: Request, res: Response): Promise<void
 
       if (!userInWhitelist) {
          log("warn", `User ${username} is not on the whitelist.`);
-         res.status(403).sendFile(path.join(__dirname, '../public/whitelist.html'));
+         res.redirect(403, 'https://wordsofdeath.vercel.app/access-denied');
          return;
       }
 
