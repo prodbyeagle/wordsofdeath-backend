@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { createEntry, getEntries, getEntryById, deleteEntry, getEntriesByAuthor } from '../controllers/entryController';
+import { createEntry, getEntries, deleteEntry, getEntriesByAuthor } from '../controllers/entryController';
 import { authenticateToken } from '../middleware/authMiddleware';
 
 const router = Router();
