@@ -73,7 +73,7 @@ export const discordCallback = async (req: Request, res: Response): Promise<void
 
       if (!userInWhitelist) {
          log("warn", `User ${username} is not on the whitelist.`);
-         res.status(403).sendFile(path.join(__dirname, '../public/not_whitelisted.html'));
+         res.status(403).sendFile(path.join(__dirname, '../public/whitelist.html'));
          return;
       }
 
