@@ -22,7 +22,6 @@ export const checkAdmin = async (req: Request, res: Response) => {
 
    const secret = process.env.JWT_SECRET;
    if (!secret) {
-      log("error", "JWT_SECRET is not defined");
       return res.status(500).json({ message: "Server error: JWT_SECRET is not defined." });
    }
 
@@ -31,23 +30,19 @@ export const checkAdmin = async (req: Request, res: Response) => {
       const username = decoded.username;
 
       if (!username) {
-         log("error", "Username not found in token");
          return res.status(400).json({ message: "Username is required." });
       }
 
       const db = await connectDB();
-
       const user = await db.collection('users').findOne({ username: username });
 
       if (!user) {
-         log("error", `User not found in the database: ${username}`);
          return res.status(404).json({ message: "User not found." });
       }
 
       if (user.roles && (user.roles.includes("admin") || user.roles.includes("owner"))) {
          return res.json({ isAdmin: true });
       } else {
-         log("error", `Access denied: User does not have admin privileges: ${username}`);
          return res.status(403).json({ message: "Access denied: User does not have admin privileges." });
       }
    } catch (error) {
