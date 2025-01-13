@@ -12,7 +12,7 @@ const router = Router();
  * @returns {Error} 404 - User not found
  * @returns {Error} 500 - Internal server error
  */
-router.get('/api/user/i/:id', authenticateToken, getUserById);
+router.get('/api/userid/:id', authenticateToken, getUserById);
 
 /**
  * Get user by username.
@@ -21,6 +21,6 @@ router.get('/api/user/i/:id', authenticateToken, getUserById);
  * @returns {Error} 404 - User not found
  * @returns {Error} 500 - Internal server error
  */
-router.get('/api/user/u/:username', authenticateToken, getUserByUsername);
+router.get('/api/user/:username', authenticateToken, getUserByUsername);
 
 export default router;

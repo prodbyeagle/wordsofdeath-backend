@@ -40,7 +40,7 @@ export const checkAdmin = async (req: Request, res: Response) => {
          return res.status(404).json({ message: "User not found." });
       }
 
-      if (user.roles && (user.roles.includes("admin") || user.roles.includes("owner"))) {
+      if (user.roles && (user.roles.includes("Admin") || user.roles.includes("Owner"))) {
          return res.json({ isAdmin: true });
       } else {
          return res.status(403).json({ message: "Access denied: User does not have admin privileges." });

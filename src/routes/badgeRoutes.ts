@@ -14,7 +14,7 @@ const router = Router();
  * @returns {Error} 400 - Invalid role or user not found.
  * @returns {Error} 500 - Internal server error.
  */
-router.post('/api/users/:username/badges', authenticateToken, addBadgeToUser);
+router.post('/api/badges/:username', authenticateToken, addBadgeToUser);
 
 /**
  * Route to remove a badge (role) from a user.
@@ -26,7 +26,7 @@ router.post('/api/users/:username/badges', authenticateToken, addBadgeToUser);
  * @returns {Error} 400 - Invalid role or user not found.
  * @returns {Error} 500 - Internal server error.
  */
-router.delete('/api/users/:username/badges', authenticateToken, removeBadgeFromUser);
+router.delete('/api/badges/:username', authenticateToken, removeBadgeFromUser);
 
 /**
  * Route to get the badges (roles) of a user.
@@ -37,6 +37,6 @@ router.delete('/api/users/:username/badges', authenticateToken, removeBadgeFromU
  * @returns {Error} 404 - User not found.
  * @returns {Error} 500 - Internal server error.
  */
-router.get('/api/users/:username/badges', authenticateToken, getBadgesFromUser);
+router.get('/api/badges/:username', authenticateToken, getBadgesFromUser);
 
 export default router;
