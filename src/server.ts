@@ -4,6 +4,7 @@ import express from 'express';
 import session from 'express-session';
 import cookieParser from 'cookie-parser';
 import authRoutes from './routes/authRoutes';
+import badgeRoutes from './routes/badgeRoutes';
 import entryRoutes from './routes/entryRoutes';
 import adminRoutes from './routes/adminRoutes';
 import userRoutes from './routes/userRoutes';
@@ -47,6 +48,7 @@ app.use(whitelistRoutes);
 app.use(statusRoutes);
 app.use(adminRoutes);
 app.use(userRoutes);
+app.use(badgeRoutes);
 
 app.listen(PORT, () => {
    log("info", `[SERVER]: Listening on port ${PORT}`);
